@@ -64,7 +64,7 @@
 /*
  * Monitor prompt
  */
-#define CONFIG_SYS_PROMPT		"LPC4350-EVAL> "
+#define CONFIG_SYS_PROMPT		"MCB4300> "
 
 /*
  * We want to call the CPU specific initialization
@@ -113,10 +113,10 @@
  * Memory layout configuration
  */
 /*
- * No internal flash on the NXP LPC4350 MCU. Setting CONFIG_MEM_NVM_LEN to the
- * size of the contiguous region of internal SRAM at address 0x10000000.
+ * Internal flash on the NXP LPC4357 MCU. Setting CONFIG_MEM_NVM_LEN to the
+ * size of the contiguous region of internal SRAM at address 0x10000000. (FIXME)
  */
-#define CONFIG_MEM_NVM_BASE		0x00000000
+#define CONFIG_MEM_NVM_BASE		0x1A000000
 #define CONFIG_MEM_NVM_LEN		(128 * 1024)
 
 #define CONFIG_MEM_RAM_BASE		0x20000000
