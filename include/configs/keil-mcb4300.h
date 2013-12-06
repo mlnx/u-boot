@@ -114,7 +114,7 @@
  */
 /*
  * Internal flash on the NXP LPC4357 MCU.
- */
+*/
 #define CONFIG_MEM_NVM_BASE		0x1A000000
 #define CONFIG_MEM_NVM_LEN		(128 * 1024)
 
@@ -388,4 +388,5 @@
 #define CONFIG_CMDLINE_TAG
 
 #endif /* __CONFIG_H */
+
 
