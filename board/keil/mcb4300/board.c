@@ -250,14 +250,28 @@ DECLARE_GLOBAL_DATA_PTR;
  * This table does not list all MCU pins that will be configured. See also
  * the code in `iomux_init()`.
  */
-static const struct lpc18xx_pin_config hitex_lpc4350_iomux[] = {
+static const struct lpc18xx_pin_config keil_mcb4300_iomux[] = {
 	/*
 	 * Pin configuration for UART
 	 */
 	{{CONFIG_LPC18XX_UART_TX_IO_GROUP, CONFIG_LPC18XX_UART_TX_IO_PIN},
-		LPC18XX_IOMUX_CONFIG(1, 0, 1, 0, 0, 0)},
+		LPC18XX_IOMUX_CONFIG(2, 0, 1, 0, 0, 0)},
 	{{CONFIG_LPC18XX_UART_RX_IO_GROUP, CONFIG_LPC18XX_UART_RX_IO_PIN},
-		LPC18XX_IOMUX_CONFIG(1, 0, 1, 0, 1, 0)},
+		LPC18XX_IOMUX_CONFIG(2, 0, 1, 0, 1, 0)},
+
+
+/*
+
+#define LPC18XX_IOMUX_CONFIG(func,epd,epun,ehs,ezi,zif) \
+	((func << LPC18XX_IOMUX_CONFIG_FUNC_BITS) | \
+	(epd   << LPC18XX_IOMUX_CONFIG_EPD_BIT) | \
+	(epun  << LPC18XX_IOMUX_CONFIG_EPUN_BIT) | \
+	(ehs   << LPC18XX_IOMUX_CONFIG_EHS_BIT) | \
+	(ezi   << LPC18XX_IOMUX_CONFIG_EZI_BIT) | \
+	(zif   << LPC18XX_IOMUX_CONFIG_ZIF_BIT))
+
+*/
+
 
 #ifdef CONFIG_LPC18XX_ETH
 	/*
@@ -442,10 +456,10 @@ static const struct lpc18xx_pin_config hitex_lpc4350_iomux[] = {
 static void iomux_init(void)
 {
 	/*
-	 * Configure GPIO pins using the `hitex_lpc4350_iomux[]` table
+	 * Configure GPIO pins using the `keil_mcb4300_iomux[]` table
 	 */
 	lpc18xx_pin_config_table(
-		hitex_lpc4350_iomux, ARRAY_SIZE(hitex_lpc4350_iomux));
+		keil_mcb4300_iomux, ARRAY_SIZE(keil_mcb4300_iomux));
 }
 
 #ifdef CONFIG_LPC18XX_NORFLASH_BOOTSTRAP_WORKAROUND
@@ -487,7 +501,7 @@ struct lpc18xx_otp_area {
  */
 static const struct lpc18xx_pin_config
 	__attribute__((section(".lpc18xx_image_top_data")))
-	hitex_lpc4350_iomux_boot_pins[] = {
+	keil_mcb4300_iomux_boot_pins[] = {
 	/* P1.1 = GPIO0[8] - BOOT1 */
 	{{0x1, 1}, LPC18XX_IOMUX_GPIO_IN(0)},
 	/* P1.2 = GPIO0[9] - BOOT2 */
@@ -537,8 +551,8 @@ static int __attribute__((section(".lpc18xx_image_top_text")))
 	 * need to reconfigure directions therefore.
 	 */
 	lpc18xx_pin_config_table(
-		hitex_lpc4350_iomux_boot_pins,
-		ARRAY_SIZE(hitex_lpc4350_iomux_boot_pins));
+		keil_mcb4300_iomux_boot_pins,
+		ARRAY_SIZE(keil_mcb4300_iomux_boot_pins));
 	rv = (LPC18XX_GPIO_B(0, 8) << 0) |
 	     (LPC18XX_GPIO_B(0, 9) << 1) |
 	     (LPC18XX_GPIO_B(5, 7) << 2) |
@@ -553,7 +567,7 @@ out:
  */
 static const struct lpc18xx_pin_config
 	__attribute__((section(".lpc18xx_image_top_data")))
-	hitex_lpc4350_iomux_boot_norflash[] = {
+	keil_mcb4300_iomux_boot_norflash[] = {
 	/*
 	 * Reconfigure the boot pins, because we turned them into GPIO inputs
 	 */
@@ -583,8 +597,8 @@ static void __attribute__((section(".lpc18xx_image_top_text")))
 	norflash_bootstrap_iomux_init(void)
 {
 	lpc18xx_pin_config_table(
-		hitex_lpc4350_iomux_boot_norflash,
-		ARRAY_SIZE(hitex_lpc4350_iomux_boot_norflash));
+		keil_mcb4300_iomux_boot_norflash,
+		ARRAY_SIZE(keil_mcb4300_iomux_boot_norflash));
 }
 
 /*

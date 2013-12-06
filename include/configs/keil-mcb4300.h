@@ -20,16 +20,16 @@
  */
 
 /*
- * Configuration settings for the Hitex LPC4350 Eval board.
+ * Configuration settings for the Keil MCB4300 Eval board.
  */
 
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
 /*
- * Disable debug messages
+ * Enable debug messages
  */
-#undef DEBUG
+#define DEBUG
 
 /*
  * This is an ARM Cortex-M4 CPU core. Also use the common Cortex-M3 code.
@@ -38,7 +38,7 @@
 #define CONFIG_SYS_ARMCORTEXM4
 
 /*
- * This is the NXP LPC4350 device which is backward-compatible with LPC1850
+ * This is the NXP LPC4357 device which is backward-compatible with LPC1850
  */
 #define CONFIG_SYS_LPC18XX
 
@@ -64,7 +64,7 @@
 /*
  * Monitor prompt
  */
-#define CONFIG_SYS_PROMPT		"LPC4350-EVAL> "
+#define CONFIG_SYS_PROMPT		"MCB4300> "
 
 /*
  * We want to call the CPU specific initialization
@@ -113,13 +113,12 @@
  * Memory layout configuration
  */
 /*
- * No internal flash on the NXP LPC4350 MCU. Setting CONFIG_MEM_NVM_LEN to the
- * size of the contiguous region of internal SRAM at address 0x10000000.
+ * Internal flash on the NXP LPC4357 MCU.
  */
-#define CONFIG_MEM_NVM_BASE		0x00000000
+#define CONFIG_MEM_NVM_BASE		0x1A000000
 #define CONFIG_MEM_NVM_LEN		(128 * 1024)
 
-#define CONFIG_MEM_RAM_BASE		0x20000000
+#define CONFIG_MEM_RAM_BASE		0x10000000
 #define CONFIG_MEM_RAM_LEN		(32 * 1024)
 #define CONFIG_MEM_RAM_BUF_LEN		(1 * 1024)
 #define CONFIG_MEM_MALLOC_LEN		(27 * 1024)
@@ -245,7 +244,7 @@
 /*
  * USART0 uses the BASE_UART0_CLK clock
  */
-#define CONFIG_SYS_NS16550_CLK		clock_get(CLOCK_UART0)
+#define CONFIG_SYS_NS16550_CLK		clock_get(CLOCK_UART3)
 #define CONFIG_CONS_INDEX		1
 /*
  * USART0 registers base: 0x40081000
@@ -253,16 +252,16 @@
  * USART2 registers base: 0x400C1000
  * USART3 registers base: 0x400C2000
  */
-#define CONFIG_SYS_NS16550_COM1		0x40081000
+#define CONFIG_SYS_NS16550_COM1		0x400C2000
 /*
  * Pin configuration for UART
  */
-#define CONFIG_LPC18XX_UART_TX_IO_GROUP		15	/* PF */
-#define CONFIG_LPC18XX_UART_TX_IO_PIN		10	/* PF.10 = USART0 TXD */
-#define CONFIG_LPC18XX_UART_TX_IO_FUNC		1
-#define CONFIG_LPC18XX_UART_RX_IO_GROUP		15	/* PF */
-#define CONFIG_LPC18XX_UART_RX_IO_PIN		11	/* PF.11 = USART0 RXD */
-#define CONFIG_LPC18XX_UART_RX_IO_FUNC		1
+#define CONFIG_LPC18XX_UART_TX_IO_GROUP		2	/* P2 */
+#define CONFIG_LPC18XX_UART_TX_IO_PIN		3	/* P2.3 = USART3 TXD */
+#define CONFIG_LPC18XX_UART_TX_IO_FUNC		2
+#define CONFIG_LPC18XX_UART_RX_IO_GROUP		2	/* P2 */
+#define CONFIG_LPC18XX_UART_RX_IO_PIN		4	/* P2.4 = USART3 RXD */
+#define CONFIG_LPC18XX_UART_RX_IO_FUNC		2
 
 #define CONFIG_BAUDRATE			115200
 #define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
@@ -354,8 +353,8 @@
  */
 #define CONFIG_BOOTDELAY		3
 #define CONFIG_ZERO_BOOTDELAY_CHECK
-#define CONFIG_HOSTNAME			lpc4350-eval
-#define CONFIG_BOOTARGS			"lpc18xx_platform=hitex-lpc4350 "\
+#define CONFIG_HOSTNAME			mcb4300
+#define CONFIG_BOOTARGS			"lpc43xx_platform=keil-mcb4300 "\
 					"console=ttyS0,115200 panic=10"
 #define CONFIG_BOOTCOMMAND		"run flashboot"
 
@@ -389,3 +388,4 @@
 #define CONFIG_CMDLINE_TAG
 
 #endif /* __CONFIG_H */
+
