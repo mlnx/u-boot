@@ -1,8 +1,18 @@
+Partial port of u-boot 2010.03 for Keil MCB4300 (LPC4357)
+
+Works
+- Boot from internal flash (address 0x1A000000, loaded with DFU utility).
+- UART0 with TX=PF_10, RX=PF_11
+
+Doesn't work
+- TBD
+
+This port is based on the Emcraft Systems U-boot and EA-LPC4357
+
+-------------
 This is the source tree of U-Boot, a popular boot loader for embedded devices. U-Boot was developed by DENX Software Engineering (www.denx.de).
-
 This particular version of U-Boot is maintained by Emcraft Systems and supports several Cortex-M3 and Cortex-M4 based MCUs.
-
 A complete list of Cortex-M MCUs and boards supported by this version of U-Boot is available at http://www.emcraft.com.
+-------------
 
-If you want to contribute code to this source tree, please email your patches to a2f-linux-support@emcraft.com.
 
