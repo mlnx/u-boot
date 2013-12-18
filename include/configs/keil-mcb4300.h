@@ -1,7 +1,9 @@
 /*
- * (C) Copyright 2012
+ * (C) Copyright 2013
  *
- * Alexander Potashev, Emcraft Systems, aspotashev@emcraft.com
+ * Marcelo Salazar, marcelo r salazar at gmail dot com
+ *
+ * Note: This version is based on the EA-LPC4357 board and Emcraft Systems git
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -38,15 +40,32 @@
 #define CONFIG_SYS_ARMCORTEXM4
 
 /*
+ * Enable RAMCODE to be loaded into separated section.
+ */
+#define CONFIG_ARMCORTEXM3_RAMCODE
+#define CONFIG_MEM_RAMCODE_BASE		0x10000000
+#define CONFIG_MEM_RAMCODE_LEN		(32 * 1024)
+
+/*
  * This is the NXP LPC4357 device which is backward-compatible with LPC1850
  */
 #define CONFIG_SYS_LPC18XX
 
 /*
+ * Except it have eNVM
+ */
+#define CONFIG_LPC43XX_ENVM
+
+/*
  * Add header to the U-Boot image to pass necessary information
  * to the Boot ROM bootloader.
  */
-#define CONFIG_LPC18XX_BOOTHEADER
+#undef CONFIG_LPC18XX_BOOTHEADER
+
+/*
+ * Compute checksum
+ */
+#define CONFIG_LPC178X_FCG
 
 /*
  * Enable GPIO driver
@@ -87,7 +106,8 @@
 /*
  * PLL1 multiplier value (1..256)
  */
-#define CONFIG_LPC18XX_PLL1_M		17	/* 12 MHz * 17 = 204 MHz */
+#define CONFIG_LPC18XX_PLL1_M		12	/* 12 MHz * 12 = 144 MHz */
+//#define CONFIG_LPC18XX_PLL1_M		17	/* 12 MHz * 17 = 204 MHz */
 
 /*
  * Number of clock ticks in 1 sec
@@ -113,15 +133,20 @@
  * Memory layout configuration
  */
 /*
- * Internal flash on the NXP LPC4357 MCU.
-*/
+ * Internal flash on the NXP LPC4357 MCU. There are two banks.
+ */
 #define CONFIG_MEM_NVM_BASE		0x1A000000
-#define CONFIG_MEM_NVM_LEN		(128 * 1024)
+#define CONFIG_MEM_NVM_LEN		(512 * 1024)
+#define CONFIG_MEM_NVM_SECTORS		15
 
-#define CONFIG_MEM_RAM_BASE		0x10000000
-#define CONFIG_MEM_RAM_LEN		(32 * 1024)
+#define CONFIG_MEM_NVM2_BASE		0x1B000000
+#define CONFIG_MEM_NVM2_LEN		(512 * 1024)
+#define CONFIG_MEM_NVM2_SECTORS		15
+
+#define CONFIG_MEM_RAM_BASE		0x10080000
+#define CONFIG_MEM_RAM_LEN		(24 * 1024)
 #define CONFIG_MEM_RAM_BUF_LEN		(1 * 1024)
-#define CONFIG_MEM_MALLOC_LEN		(27 * 1024)
+#define CONFIG_MEM_MALLOC_LEN		(11 * 1024)
 #define CONFIG_MEM_STACK_LEN		(4 * 1024)
 
 /*
@@ -135,23 +160,32 @@
 #define CONFIG_NR_DRAM_BANKS		1
 #define CONFIG_SYS_RAM_CS		0	/* 0 .. 3 */
 #define CONFIG_SYS_RAM_BASE		0x28000000
-#define CONFIG_SYS_RAM_SIZE		(8 * 1024 * 1024)
+#define CONFIG_SYS_RAM_SIZE		(32 * 1024 * 1024)
+
 /*
  * Buffers for Ethernet DMA (cannot be in the internal System RAM)
  */
-#define CONFIG_MEM_ETH_DMA_BUF_BASE	0x10080000	/* Region of SRAM */
+#define CONFIG_MEM_ETH_DMA_BUF_BASE	0x20000000	/* Region of SRAM */
+
 /*
  * Use the CPU_CLOCK/2 for EMC
  */
 #define CONFIG_LPC18XX_EMC_HALFCPU
 
+/*
+#define CONFIG_ENV_IS_NOWHERE
+
+#define CONFIG_ENV_SIZE			(4 * 1024)
+#define CONFIG_ENV_ADDR			0
+*/
+
 /* Uncomment the following line to disable Flash support */
-/* #define CONFIG_SYS_NO_FLASH */
+#define CONFIG_SYS_NO_FLASH
 #ifndef CONFIG_SYS_NO_FLASH
 /*
  * Configuration of the external Flash memory
  */
-#define CONFIG_SYS_FLASH_CS		0
+#define CONFIG_SYS_FLASH_CS		1
 #define CONFIG_SYS_FLASH_CFG		0x81 /* 16 bit, Byte Lane enabled */
 #define CONFIG_SYS_FLASH_WE		(1 - 1)		/* Minimum is enough */
 #define CONFIG_SYS_FLASH_OE		0		/* Minimum is enough */
@@ -160,7 +194,7 @@
 #define CONFIG_SYS_FLASH_WR		0x1f		/* Maximum */
 #define CONFIG_SYS_FLASH_TA		0x0f		/* Maximum */
 
-#define CONFIG_SYS_FLASH_BANK1_BASE	0x1C000000 /* CS0 */
+#define CONFIG_SYS_FLASH_BANK1_BASE	0x1D000000 /* CS1 */
 
 #define CONFIG_SYS_FLASH_CFI		1
 #define CONFIG_FLASH_CFI_DRIVER		1
@@ -177,56 +211,24 @@
 	(CONFIG_SYS_FLASH_BANK1_BASE + 128 * 1024)
 #define CONFIG_ENV_OVERWRITE		1
 
-/*
- * Support booting U-Boot from NOR flash
- */
-/* U-Boot will reload itself from flash to be sure the whole image is in SRAM */
-#define CONFIG_LPC18XX_NORFLASH_BOOTSTRAP_WORKAROUND
-/* The image contents go immediately after the 16-byte header */
-#define CONFIG_LPC18XX_NORFLASH_IMAGE_OFFSET	16
 #endif
+
 
 /* Uncomment the following line to enable the SPIFI interface */
-/* #define CONFIG_SPIFI */
+#define CONFIG_SPIFI
+
 #ifdef CONFIG_SPIFI
 #define CONFIG_SPIFI_BASE		0x14000000
-#define CONFIG_SPIFI_SIZE		(16*1024*1024)
+#define CONFIG_SPIFI_SIZE		(2*1024*1024)
 
-#ifndef CONFIG_ENV_IS_IN_FLASH
+#define CONFIG_SPIFILIB_IN_ENVM		/* Place SPIFI lib into ENVM */
+
+#if !defined(CONFIG_ENV_IS_IN_FLASH) && !defined(CONFIG_ENV_IS_NOWHERE)
 #define CONFIG_ENV_IS_IN_SPIFI
 #define CONFIG_ENV_SIZE			(4 * 1024)
-#define CONFIG_ENV_ADDR \
-	(CONFIG_SPIFI_BASE + 128 * 1024)
+#define CONFIG_ENV_ADDR			CONFIG_SPIFI_BASE
 #define CONFIG_ENV_OVERWRITE		1
 #endif
-#endif
-
-/* Uncomment the following line to enable SPI */
-/* #define CONFIG_LPC_SPI */
-#ifdef CONFIG_LPC_SPI
-#ifdef CONFIG_SPIFI
-#error SPI cannot be used along with SPIFI
-#endif
-#define CONFIG_LPC_SPI_PINS {                                  \
-       {{0x3, 3}, LPC18XX_IOMUX_CONFIG(1, 0, 0, 1, 0, 0)},     \
-       {{0x3, 6}, LPC18XX_IOMUX_CONFIG(1, 0, 0, 1, 1, 1)},     \
-       {{0x3, 7}, LPC18XX_IOMUX_CONFIG(1, 0, 0, 1, 0, 0)},     \
-       {{0x3, 8}, LPC18XX_IOMUX_CONFIG(4, 0, 0, 1, 0, 0)}      \
-}
-#define CONFIG_LPC_CS_GPIO {5, 11}
-
-/*
- * Configure SPI Flash
- */
-
-#define CONFIG_SPI_FLASH		1
-#define CONFIG_SPI_FLASH_SPANSION	1
-#define CONFIG_SPI_FLASH_BUS		0
-#define CONFIG_SPI_FLASH_CS		0
-#define CONFIG_SPI_FLASH_MODE		0
-#define CONFIG_SPI_FLASH_SPEED		(clock_get(CLOCK_SPI) / 8)
-#define CONFIG_SF_DEFAULT_SPEED		CONFIG_SPI_FLASH_SPEED
-#define CONFIG_SF_DEFAULT_MODE		CONFIG_SPI_FLASH_MODE
 #endif
 
 /*
@@ -244,24 +246,30 @@
 /*
  * USART0 uses the BASE_UART0_CLK clock
  */
-#define CONFIG_SYS_NS16550_CLK		clock_get(CLOCK_UART3)
+#define CONFIG_SYS_NS16550_CLK		clock_get(CLOCK_UART0)
 #define CONFIG_CONS_INDEX		1
+
+#if 0
+# define CONFIG_UART0_CLOCK_XTAL
+# define CONFIG_SERIAL0_SPECIAL_BAUDRATE		0xC10006
+#endif
+
 /*
  * USART0 registers base: 0x40081000
  * UART1 registers base:  0x40082000
  * USART2 registers base: 0x400C1000
  * USART3 registers base: 0x400C2000
  */
-#define CONFIG_SYS_NS16550_COM1		0x400C2000
+#define CONFIG_SYS_NS16550_COM1		0x40081000
 /*
  * Pin configuration for UART
  */
-#define CONFIG_LPC18XX_UART_TX_IO_GROUP		2	/* P2 */
-#define CONFIG_LPC18XX_UART_TX_IO_PIN		3	/* P2.3 = USART3 TXD */
-#define CONFIG_LPC18XX_UART_TX_IO_FUNC		2
-#define CONFIG_LPC18XX_UART_RX_IO_GROUP		2	/* P2 */
-#define CONFIG_LPC18XX_UART_RX_IO_PIN		4	/* P2.4 = USART3 RXD */
-#define CONFIG_LPC18XX_UART_RX_IO_FUNC		2
+#define CONFIG_LPC18XX_UART_TX_IO_GROUP		15	/* PF */
+#define CONFIG_LPC18XX_UART_TX_IO_PIN		10	/* PF.10 = USART0 TXD */
+#define CONFIG_LPC18XX_UART_TX_IO_FUNC		1
+#define CONFIG_LPC18XX_UART_RX_IO_GROUP		15	/* PF */
+#define CONFIG_LPC18XX_UART_RX_IO_PIN		11	/* PF.11 = USART0 RXD */
+#define CONFIG_LPC18XX_UART_RX_IO_FUNC		1
 
 #define CONFIG_BAUDRATE			115200
 #define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
@@ -272,6 +280,7 @@
 #define CONFIG_NET_MULTI
 #define CONFIG_LPC18XX_ETH
 #define CONFIG_LPC18XX_ETH_DIV_SEL	4	/* 150-250 MHz */
+#define CONFIG_LPC18XX_ENET_USE_PHY_RMII
 
 /*
  * Ethernet RX buffers are malloced from the internal SRAM (more precisely,
@@ -280,9 +289,9 @@
  * which determines the number of ethernet RX buffers (number of frames which
  * may be received without processing until overflow happens).
  */
-#define CONFIG_SYS_RX_ETH_BUFFER	3
+#define CONFIG_SYS_RX_ETH_BUFFER	2
 
-#define CONFIG_SYS_TX_ETH_BUFFER	3
+#define CONFIG_SYS_TX_ETH_BUFFER	2
 
 /*
  * Console I/O buffer size
@@ -351,7 +360,7 @@
 /*
  * Auto-boot sequence configuration
  */
-#define CONFIG_BOOTDELAY		3
+#define CONFIG_BOOTDELAY		5
 #define CONFIG_ZERO_BOOTDELAY_CHECK
 #define CONFIG_HOSTNAME			mcb4300
 #define CONFIG_BOOTARGS			"lpc43xx_platform=keil-mcb4300 "\
@@ -369,7 +378,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS				\
 	"loadaddr=0x28000000\0"					\
 	"addip=setenv bootargs ${bootargs} ip=${ipaddr}:${serverip}:${gatewayip}:${netmask}:${hostname}:eth0:off\0"				\
-	"flashaddr=1C040000\0"					\
+	"flashaddr=0x14001000\0"				\
 	"flashboot=run addip;bootm ${flashaddr}\0"		\
 	"ethaddr=C0:B1:3C:88:88:90\0"				\
 	"ipaddr=172.17.4.215\0"					\
@@ -379,7 +388,10 @@
 	"update=tftp ${image};"					\
 	"prot off ${flashaddr} +${filesize};"			\
 	"era ${flashaddr} +${filesize};"			\
-	"cp.b ${loadaddr} ${flashaddr} ${filesize}\0"
+	"cp.b ${loadaddr} ${flashaddr} ${filesize}\0"		\
+	"uboot_image=u-boot.bin\0"				\
+	"uboot_update=tftp ${uboot_image};"			\
+	"cptf 1A000000 ${loadaddr} ${filesize}\0"
 
 /*
  * Linux kernel boot parameters configuration
@@ -388,5 +400,3 @@
 #define CONFIG_CMDLINE_TAG
 
 #endif /* __CONFIG_H */
-
-
