@@ -160,7 +160,7 @@
 #define CONFIG_NR_DRAM_BANKS		1
 #define CONFIG_SYS_RAM_CS		0	/* 0 .. 3 */
 #define CONFIG_SYS_RAM_BASE		0x28000000
-#define CONFIG_SYS_RAM_SIZE		(32 * 1024 * 1024)
+#define CONFIG_SYS_RAM_SIZE		(16UL * 1024UL * 1024UL - 1)
 
 /*
  * Buffers for Ethernet DMA (cannot be in the internal System RAM)
@@ -190,11 +190,11 @@
 #define CONFIG_SYS_FLASH_WE		(1 - 1)		/* Minimum is enough */
 #define CONFIG_SYS_FLASH_OE		0		/* Minimum is enough */
 #define CONFIG_SYS_FLASH_RD		(15 - 1)	/* 70ns at 204MHz */
-#define CONFIG_SYS_FLASH_PAGE		(15 - 1)	/* 70ns at 204MHz */
+#define CONFIG_SYS_FLASH_PAGE	(15 - 1)	/* 70ns at 204MHz */
 #define CONFIG_SYS_FLASH_WR		0x1f		/* Maximum */
 #define CONFIG_SYS_FLASH_TA		0x0f		/* Maximum */
 
-#define CONFIG_SYS_FLASH_BANK1_BASE	0x1D000000 /* CS1 */
+#define CONFIG_SYS_FLASH_BANK1_BASE	0x1C000000 /* CS0 */
 
 #define CONFIG_SYS_FLASH_CFI		1
 #define CONFIG_FLASH_CFI_DRIVER		1
@@ -330,7 +330,7 @@
  */
 #include <config_cmd_default.h>
 #undef CONFIG_CMD_BOOTD
-#undef CONFIG_CMD_CONSOLE
+#define CONFIG_CMD_CONSOLE
 #undef CONFIG_CMD_ECHO
 #undef CONFIG_CMD_EDITENV
 #undef CONFIG_CMD_FPGA
@@ -347,6 +347,8 @@
 #define CONFIG_CMD_SF
 #endif
 
+#define CONFIG_SYS_ALT_MEMTEST
+#define CONFIG_SYS_MEMTEST_SCRATCH 0x2000f000
 /*
  * To save memory disable long help
  */
@@ -364,7 +366,7 @@
 #define CONFIG_ZERO_BOOTDELAY_CHECK
 #define CONFIG_HOSTNAME			mcb4300
 #define CONFIG_BOOTARGS			"lpc43xx_platform=keil-mcb4300 "\
-					"console=ttyS0,115200 panic=10"
+					"console=ttyS0,115200 panic=20"
 #define CONFIG_BOOTCOMMAND		"run flashboot"
 
 /*

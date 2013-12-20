@@ -1,8 +1,11 @@
 Partial port of u-boot 2010.03 for Keil MCB4300 (LPC4357)
 
 Works
+- Core runs at 204 Mhz
 - Boot from internal flash (address 0x1A000000, loaded with DFU utility).
-- UART0 with TX=PF_10, RX=PF_11
+- SDRAM config (tested with alternative mtest)
+- UART0 with TX=PF_10, RX=PF_11, 115200 bauds
+
 
 Doesn't work
 - TBD
